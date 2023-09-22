@@ -2,7 +2,7 @@ module OQ3Semantics
 
 export Angle, Angle8, Angle16, Angle32, Angle64, Angle128, bitsizeof
 
-const _SCALE = 1.0
+const _SCALE = 2.0 * pi
 
 """
     Angle{T<:Unsigned}
@@ -30,9 +30,14 @@ Construct an `Angle` from a floating point number `x` in `[0, 1)`.
 The returned value represents the closest representable angle in turns.
 """
 function Angle{T}(x::AbstractFloat) where T <: Unsigned
-    (x >= 0 && x < 1) || throw(DomainError(x, "Only floating point values in [0, 1) can be converted to `Angle`"))
+    (x >= 0 && x < _SCALE) || throw(DomainError(x, "Only floating point values in [0, $_SCALE) can be converted to `Angle`"))
     Angle(round(T, x * 2.0^bitsizeof(T) / _SCALE))
 end
+
+Base.:(==)(a1::Angle{T}, a2::Angle{T}) where T = a1 === a2
+
+# FIXME could be more efficient and exact
+Base.:(==)(a1::Angle{T}, a2::Angle{V}) where {T, V} = float(a1) == float(a2)
 
 """
     eps(a::Angle)

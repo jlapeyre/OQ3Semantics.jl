@@ -1,4 +1,4 @@
-using OQ3Semantics: Angle, Angle8, Angle16, Angle32, Angle64, Angle128
+using OQ3Semantics: OQ3Semantics, Angle, Angle8, Angle16, Angle32, Angle64, Angle128
 using Test
 
 @testset "OQ3Semantics.jl" begin
@@ -16,10 +16,11 @@ using Test
         @test eps(T) == float(T(1))
     end
 
-    # 64 and 128 bits can represent angles to the precision of Float64
+    scale = OQ3Semantics._SCALE
     for T in (Angle64, Angle128)
-        for v in (1 - 1e-6, 1 - 1e-8, 1 - 1e-12)
+        for v in (scale - 1e-6, scale - 1e-8, scale - 1e-12)
             @test float(T(v)) == v
         end
     end
+
 end
