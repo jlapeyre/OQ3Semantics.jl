@@ -2,7 +2,7 @@ module OQ3Semantics
 
 export Angle, Angle8, Angle16, Angle32, Angle64, Angle128, bitsizeof
 
-# Represent an angle in "turns".
+const _SCALE = 1.0
 
 """
     Angle{T<:Unsigned}
@@ -21,7 +21,7 @@ end
 
 Base.Integer(a::Angle) = a._int
 Base.show(io::IO, a::Angle) = print(io, float(a))
-Base.float(a::Angle) = Integer(a) / 2.0^bitsizeof(a)
+Base.float(a::Angle) = Integer(a) * (_SCALE / 2.0^bitsizeof(a))
 
 """
     Angle{T}(x::AbstractFloat) where T <: Unsigned
@@ -31,7 +31,7 @@ The returned value represents the closest representable angle in turns.
 """
 function Angle{T}(x::AbstractFloat) where T <: Unsigned
     (x >= 0 && x < 1) || throw(DomainError(x, "Only floating point values in [0, 1) can be converted to `Angle`"))
-    Angle(round(T, x * 2.0^bitsizeof(T)))
+    Angle(round(T, x * 2.0^bitsizeof(T) / _SCALE))
 end
 
 """
@@ -40,7 +40,7 @@ end
 
 The increment between consecutive representable values of `typeof(a)` in turns.
 """
-Base.eps(::Type{T}) where T <: Angle = 1/2.0^bitsizeof(T)
+Base.eps(::Type{T}) where T <: Angle = _SCALE /2.0^bitsizeof(T)
 Base.eps(a::Angle) = eps(typeof(a))
 
 Base.:*(a1::Angle{T}, x::Integer) where T = Angle(T(x) * Integer(a1))
