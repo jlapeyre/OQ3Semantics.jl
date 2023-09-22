@@ -3,10 +3,12 @@ module OQ3Semantics
 export Angle, Angle8, Angle16, Angle32, Angle64, Angle128, bitsizeof
 
 const _SCALE = 2.0 * pi
+#const _SCALE = 1.0
 
 """
     Angle{T<:Unsigned}
 
+NOTE: this doc string is incorrect for _SCALE = 2.0 * pi.
 Represents an angle in "turns". A turn is a real number in `[0, 1)`.
 This `struct` represents real values from `0` to `1 - 1/2^n`, separated by increments of
 `1/2^n` where `n` is the width of `T` in bits.
